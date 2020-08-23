@@ -1,0 +1,10 @@
+{
+  "tiles": {
+    "grass.png": {
+      "frame": 57
+    },
+    "path": {
+      "frame": 25
+    }
+  }
+}
