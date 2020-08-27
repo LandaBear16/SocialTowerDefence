@@ -1,7 +1,10 @@
 import bunny from 'img/bunny.png'
-import towerOne from 'img/t1.png'
+import mapbackground from 'img/map.png'
 import floortileset from 'img/floortileset.png'
 import * as PIXI from 'pixi.js'
+import UIElement from './UIElement'
+import {UIWave} from './UIWave'
+import * as LEVEL from './level'
 
 import { towers } from '../js/towerObject'
 
@@ -11,6 +14,7 @@ let container;
 let rect;
 let world;
 let tileTextures;
+var timer = 0;
 
 const tileSize = 32;
 const mapSize = 8;
@@ -19,36 +23,196 @@ const interactiveTile = 6;
 let displayMenu = false;
 
 
-let map = {
-  width: 25,
-  height: 19,
-  tiles: [
-    57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 6, 25, 6, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57,
-    57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 6, 25, 6, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57,
-    57, 57, 57, 57, 57, 57, 57, 57, 57, 6, 6, 6, 25, 6, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57,
-    57, 57, 57, 57, 57, 57, 57, 57, 57, 6, 25, 25, 25, 6, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57,
-    57, 57, 57, 57, 57, 57, 57, 57, 57, 6, 25, 6, 6, 6, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57,
-    57, 57, 57, 57, 57, 57, 57, 57, 57, 6, 25, 6, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57,
-    57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57,
-    57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57,
-    57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57,
-    57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57,
-    57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57,
-    57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57,
-    57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57,
-    57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57,
-    57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57,
-    57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57,
-    57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57,
-    57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57,
-    57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57,
-  ]
+export const setup = () => {
+  app = new PIXI.Application({ backgroundColor: 0x1099bb, width: 920, height: 640 });
+  // document.body.appendChild(app.view);
+  $("#daGame").append(app.view);
+
+  // $("#inputPanel").fadeOut();
+// function lost() {
+//     $("#points").text("You have won " + score + " points! Well played");
+//     $("#inputPanel").fadeIn();
+// }
+
+// function resetGame() {
+//     //enemy settings
+//     enemyHP = 40;
+//     enemySpeed = 11;
+//     enemiesN = 6;
+//     enemyID = 0;
+
+//     //ui elements
+//     health = 100;
+//     money = 500;
+//     score = 0;
+// }
+
+// $("#submit").on("click", function () {
+//     addNewScore($("#name").val(), score);
+//     resetGame();
+//     $("#inputPanel").fadeOut();
+// });
+
+// $("#newGame").on("click", function () {
+//     $("#inputPanel").fadeOut();
+//     resetGame();
+// });
+
+// $(".glyphicon").on("click", function () {
+//     if ($(this).hasClass("glyphicon-volume-off")) {
+//         $(this).removeClass("glyphicon-volume-off");
+//         $(this).addClass("glyphicon-volume-up");
+//         // soundTrack.stop();
+//     } else {
+//         $(this).removeClass("glyphicon-volume-up");
+//         $(this).addClass("glyphicon-volume-off");
+//         console.log("vlez");
+//         // soundTrack.play();
+//     }
+// });
+  
+  // **** SET BACKGROUND MAP ******
+  var map = new PIXI.Sprite(PIXI.Texture.from(mapbackground));
+  app.stage.addChild(map);
+  // **** SET BACKGROUND MAP ******
+
+  // **** SET WAVE BUTTON ******
+  var newWave = new UIWave(app);
+
+  app.stage.addChild(newWave.sprite);
+  // **** SET WAVE BUTTON ******
+
+  var pause = new PIXI.Sprite(PIXI.Texture.from(bunny));
+  pause.interactive = true;
+  pause.buttonMode = true;
+  pause.position.x = 100;
+  pause.position.y = 100
+  pause.on('mousedown', () => {
+    if(app.ticker.started === true) {
+      app.ticker.stop()
+      console.log('bunny', app.ticker)
+    } else {
+      app.ticker.start()
+    }
+   
+  })
+  app.stage.addChild(pause);
+
+  // **** SET UP TOWERS ******
+  console.log('towers', towers.towers.t1)
+  var uiElements = [new UIElement(towers.towers.t1, app), new UIElement(towers.towers.t2, app), new UIElement(towers.towers.t3, app)];
+
+  for (var i = 0; i < uiElements.length; i++) {
+    uiElements[i].placeSprite()
+    app.stage.addChild(uiElements[i].text);
+    // app.stage.addChild(uiElements[i].tooltip);
+  }
+  // **** SET UP TOWERS ******
+
+  var healthText = new PIXI.Text(LEVEL.getHealth(), { font: "30px Galindo", fill: "#d6c069" });
+  healthText.position.x = 64 * 10 + 30;
+  healthText.position.y = 10;
+  app.stage.addChild(healthText);
+  var textMoney = new PIXI.Text(LEVEL.getMoney(), { font: "30px Galindo", fill: "#d6c069" });
+  textMoney.position.x = 64 * 10 + 30;
+  textMoney.position.y = 50;
+  app.stage.addChild(textMoney);
+  var scoreText = new PIXI.Text(LEVEL.getScore(), { font: "35px Galindo", fill: "#d6c069" });
+  scoreText.position.x = 64 * 10 + 30;
+  scoreText.position.y = 465;
+  app.stage.addChild(scoreText);
+
+  for(var i = 0; i < 640; i++) {
+    var x = new PIXI.Text(".", {fill: "#d6c069" });
+    var y = new PIXI.Text(".");
+    x.position.x = 576;
+    x.position.y = 64;
+    // y.position.x = i;
+    // x.position.y = i;
+    app.stage.addChild(x);
+    // app.stage.addChild(y);
+  }
+
+  var y = new PIXI.Text(".");
+  y.position.x = 0;
+    x.position.y = 0;
+    app.stage.addChild(y);
+
+  // requestAnimationFrame(animate);
+  app.ticker.add(animate)
+function animate () {
+    LEVEL.getEnemies().sort(function (a, b) {
+        return a.traveled - b.traveled;
+    });
+    for (var i = 0; i < uiElements.length; i++) {
+        if (uiElements[i].price <= LEVEL.getMoney()) {
+            uiElements[i].dimOut();
+        } else {
+            uiElements[i].dim();
+        }
+    }
+    timer++;
+    timer = timer % 1000;
+    // timer = app.ticker.deltaTime
+    // console.log('timer', timer)
+
+    healthText.text = "Health: " + LEVEL.getHealth()
+    textMoney.text = "Money: " + LEVEL.getMoney();
+    scoreText.text = "Score: " + LEVEL.getScore();
+  
+
+    for (var i = 0; i < LEVEL.getTowers().length; i++) {
+      LEVEL.getTowers()[i].getTarget(LEVEL.getEnemies().length - 1);
+        if (timer % LEVEL.getTowers()[i].shootSpeed == 0 && LEVEL.getTowers()[i].target != null) LEVEL.getTowers()[i].shootTarget();
+    }
+
+    for (var i = 0; i < LEVEL.getEnemies().length; i++) {
+      LEVEL.getEnemies()[i].move();
+      // LEVEL.getEnemies()[i].clearRange();
+      
+    }
+
+    for (var i = 0; i < LEVEL.getBulletsArray().length; i++) {
+      LEVEL.getBulletsArray()[i].travel();
+    }
+
+    if (LEVEL.getEnemies().length === 0) {
+        for (var i = 0; i < LEVEL.getBulletsArray().length; i++) {
+          LEVEL.getBulletsArray()[i].destroy();
+        }
+    }
+    if (LEVEL.getHealth() <= 0) {
+        for (var i = 0; i < LEVEL.getEnemies().length; i++) {
+          LEVEL.getEnemies()[i].Die();
+        }
+        LEVEL.setHealth();
+        lost();
+    }
+
+    if (LEVEL.getEnemies().length != 0) {
+        if (LEVEL.getEnemies()[LEVEL.getEnemies().length - 1].traveled > 750) {
+            newWave.sprite.interactive = true;
+            newWave.sprite.alpha = 1;
+        }
+        else {
+            newWave.sprite.interactive = false;
+            newWave.sprite.alpha = 0.5;
+        }
+    }
+    if (LEVEL.getHealth() === 0) {
+        newWave.sprite.interactive = false;
+        newWave.sprite.alpha = 0.5;
+    }
+    if (LEVEL.getEnemies().length === 0) {
+        newWave.sprite.interactive = true;
+        newWave.sprite.alpha = 1;
+    }
+
+    // renderer.render(stage);
+    // requestAnimationFrame(animate);
 }
 
-export const setup = () => {
 
-  console.log('PIXI', PIXI)
-  app = new PIXI.Application({ backgroundColor: 0x1099bb, width: 920, height: 640 });
   // container = new PIXI.Container();
   // container.interactive = true;
   // container.hitArea = new PIXI.Rectangle(0, 0, 600, 600);
@@ -63,27 +227,35 @@ export const setup = () => {
 
   // app.stage.addChild(container);
 
-  document.body.appendChild(app.view);
+  
 
 
   // create a texture from an image path
   // texture = PIXI.Texture.from(bunny);
-  app.loader.add('tileset', floortileset);
-  app.loader.load(() => {
-    createTileMap();
-    createWorldMap();
+  // console.log("setup -> texture", texture)
+  // const txt = PIXI.Texture.from(towerOne)
+  // console.log("setup -> txt", txt)
+  
+  // app.loader.add('tileset', floortileset);
+  // app.loader.load(() => {
+  //   createTileMap();
+  //   createWorldMap();
   
 
-    // var uiElements = [UIElement(towers.towers.t1, app), UIElement(towers.towers.t2, app), UIElement(towers.towers.t3, app)];
-    // for (var i = 0; i < uiElements.length; i++) {
-    //   app.stage.addChild(uiElements[i].sprite);
-    //   app.stage.addChild(uiElements[i].text);
-    //   app.stage.addChild(uiElements[i].tooltip);
-    // }
+    
+    // console.log("setup -> uiElements", uiElements)
+
+    // app.stage.addChild(tesb);
+    // var testSprite = new UIElement(towers.towers.t1, app)
+
+    
+    // app.stage.addChild(testSprite.sprite)
+    
+    
     
 
-    app.stage.addChild(world);
-  });
+  //   app.stage.addChild(world);
+  // });
   // app.loader.onComplete.add(createTileMap);
 
   // const test = new UIElement("images/PNG/3.png", 720, 175, 100, 100, 150, 100, "A somewhat slower\nbut powerfull tower!")

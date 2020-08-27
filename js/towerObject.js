@@ -30,7 +30,7 @@ export const towers = {
       y: 392,
       price: 500,
       shootSpeed: 300,
-      range: 1000,
+      range: 500,
       damage: 1000,
       tooltip: "The sniper\nKills instant from far!"
     }

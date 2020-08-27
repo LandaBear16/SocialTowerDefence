@@ -32,3 +32,4 @@ module.exports = {
     extensions: ['.html', '.js', '.jsx', '.json', '.scss']
   }
 };
+
